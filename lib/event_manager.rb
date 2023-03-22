@@ -72,11 +72,24 @@ class EventDateTime
     end
 
     def clean_date_time(d_t)
-        puts d_t
+        begin
+            #the date_time argument is in the format 11/12/08 10:47, which includes a date component. 
+            #To parse a date and time string in the format 11/12/08 10:47, 
+            # use the %m/%d/%y %H:%M format string.
+
+            time = Time.strptime(d_t, "%m/%d/%y %H:%M")
+            @times << time.hour
+            @days << Date::DAYNAMES[time.wday]
+        rescue ArgumentError => e
+            puts "Error parsing date/time string: #{e.message}"
+        end
+    end
+=begin
+    def clean_date_time(d_t)
         @times << Time.strptime(d_t, "%m/%d/%y %H:%M").hour
-        #the date_time argument is in the format 11/12/08 10:47, which includes a date component. To parse a date and time string in the format 11/12/08 10:47, you should use the %m/%d/%y %H:%M format string. For example:
         @days << Time.strptime(d_t, '%m/%d/%y %H:%M').wday
     end
+=end
 
     public
     def get_peak_times
@@ -105,6 +118,14 @@ class EventDateTime
 
         return max_consecutive_hours.join(", ")
     end
+
+    public 
+    def get_peak_days
+        @days.reduce(Hash.new(0)) do |acc, curr| 
+            acc[curr] += 1
+            acc
+        end.keys[0]
+    end
 end
 
 date_time = EventDateTime.new
@@ -123,10 +144,10 @@ contents.each do |row|
     #instance of binding knows all about the current state of variables and methods within the given scope. 
     form_letter = erb_template.result(binding) 
 
-    puts "#{name} #{phone}"
-    #save_thank_you_letter(id, form_letter)
+    #puts "#{name} #{phone}"
+    save_thank_you_letter(id, form_letter)
 end
 
 puts "The peak registration hours are: #{date_time.get_peak_times}"
-puts "The peak registration days are: #{date_time.days}"
+puts "The peak registration day is #{date_time.get_peak_days}"
 
