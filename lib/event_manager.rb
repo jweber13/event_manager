@@ -26,7 +26,7 @@ end
 
 def legislators_by_zipcode(zip)
     civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
-    civic_info.key = 'AIzaSyBvvZwQbA5IV6_QbobgQ6A_ZJlt5B7GiWg'
+    civic_info.key = 'YOUR KEY HERE'
 
     begin
         civic_info.representative_info_by_address(
